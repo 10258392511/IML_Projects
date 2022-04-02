@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
 
+from sklearn.model_selection import train_test_split
 from pprint import pprint
-from configs import *
+from .configs import *
 
 
 def summarize_dataset(df_train, df_train_label):
@@ -35,13 +36,9 @@ def aggregate_by_mean_and_impute(df_train, if_save=True, save_path=None):
         df_train_imputed.to_csv(save_path)
 
 
-if __name__ == '__main__':
-    train_filename = "../data/train_features.csv"
-    train_label_filename = "../data/train_labels.csv"
-    df_train = pd.read_csv(train_filename)
-    df_train_label = pd.read_csv(train_label_filename)
-    summarize_dataset(df_train, df_train_label)
+def split_data(df_train: pd.DataFrame, df_train_label: pd.DataFrame, label, test_size=0.1, random_state=0):
+    X = df_train.values
+    y = df_train_label[label].values
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-    print("Imputing data...")
-    save_path = "../data/train_features_agg_imputed.csv"
-    aggregate_by_mean_and_impute(df_train, if_save=True, save_path=save_path)
+    return X_train, y_train, X_test, y_test
