@@ -52,6 +52,18 @@ conf_logistic_cross_val_args = {
     "verbose": 3
 }
 
+conf_SVR_cross_val_args = {
+    "param_grid": {
+        "svr__C": [1, 10, 100],
+        "svr__gamma": [1],
+        "svr__kernel": ["rbf"]
+    },
+    "scoring": ["r2", "neg_root_mean_squared_error"],
+    "refit": "r2",
+    "cv": 3,
+    "verbose": 3
+}
+
 conf_data_split_args = {
     "test_size": 0.1,
     "random_state": 0

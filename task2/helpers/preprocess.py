@@ -37,8 +37,11 @@ def aggregate_by_mean_and_impute(df_train, if_save=True, save_path=None):
 
 
 def split_data(df_train: pd.DataFrame, df_train_label: pd.DataFrame, label, test_size=0.1, random_state=0):
-    X = df_train.values
-    y = df_train_label[label].values
+    if isinstance(df_train, np.ndarray) and isinstance(df_train_label, np.ndarray):
+        X, y = df_train, df_train_label
+    else:
+        X, y = df_train.values, df_train_label[label].values
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
     return X_train, y_train, X_test, y_test

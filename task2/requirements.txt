@@ -61,6 +61,7 @@ pyzmq==22.3.0
 scikit-image==0.19.2
 scikit-learn==1.0.2
 scipy==1.8.0
+seaborn==0.11.2
 Send2Trash==1.8.0
 six==1.16.0
 soupsieve==2.3.1
