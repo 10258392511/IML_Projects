@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import abc
 
@@ -71,3 +74,37 @@ class Regressor(AbstractModel):
         r2_score_val = r2_score(self.y_test, pred)
 
         return pred, r2_score_val
+
+
+class SequenceModel(nn.Module):
+    def __init__(self, params):
+        """
+        params: in the form of configs.conf_seq_model_params
+        """
+        super(SequenceModel, self).__init__()
+        self.params = params
+        self.embed_dim = self.params["transformer_encoder_layer_params"]["d_model"]
+        self.head_dim = self.embed_dim // self.params["transformer_encoder_layer_params"]["nhead"]
+        self.embed = nn.Linear(self.params["input_dim"], self.embed_dim)
+        encoder_layer = nn.TransformerEncoderLayer(**self.params["transformer_encoder_layer_params"])
+        self.encoder = nn.TransformerEncoder(encoder_layer, **self.params["transformer_encoder_params"])
+        # self.head = nn.Sequential(
+        #     nn.Linear(self.embed_dim + 1, len(TESTS) + len(VITALS)),  # +1: append "age",
+        #     nn.ReLU(),
+        #     nn.Linear(len(TESTS) + len(VITALS), len(TESTS) + len(VITALS))
+        # )
+        self.head = nn.Linear(self.embed_dim, len(TESTS) + len(VITALS))
+
+    def forward(self, X_age, X_features, mask=None):
+        # X_age: (B,), X_features: (B, T, N_features)
+        if mask is None:
+            mask = nn.Transformer.generate_square_subsequent_mask(X_features.shape[1]).to(conf_device)
+        X_emb = self.embed(X_features)  # (B, T, N_emb)
+        X_encoded = self.encoder(X_emb.permute(1, 0, 2), mask)  # (B, T, N_emb) -> (T, B, N_emb) -> (T, B, N_emb)
+        # X = torch.cat([X_encoded[-1, ...], X_age.view(-1, 1)], dim=1)  # (B, N_emb + 1)
+        X = X_encoded[-1, ...]
+        X = self.head(X)  # (B, N_cls + N_reg)
+        assert len(TESTS) + len(VITALS) == X.shape[1]
+        X_cls, X_reg = torch.sigmoid(X[:, :len(TESTS)]), X[:, len(TESTS):]
+
+        return X_cls, X_reg

@@ -1,4 +1,6 @@
 data/
-exps.ipynb
+exps*.ipynb
 *__pycache__/
 *.ipynb_checkpoints/
+run/
+params/

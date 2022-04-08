@@ -1,8 +1,17 @@
+import torch
+
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold
 from imblearn.over_sampling import SMOTE
 
+
+conf_device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+VITALS = ['LABEL_RRate', 'LABEL_ABPm', 'LABEL_SpO2', 'LABEL_Heartrate']
+TESTS = ['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos', 'LABEL_Bilirubin_total',
+         'LABEL_Lactate', 'LABEL_TroponinI', 'LABEL_SaO2',
+         'LABEL_Bilirubin_direct', 'LABEL_EtCO2', 'LABEL_Sepsis']
 
 conf_classification_columns = ['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos',
                           'LABEL_Bilirubin_total', 'LABEL_Lactate', 'LABEL_TroponinI', 'LABEL_SaO2',
@@ -67,4 +76,29 @@ conf_SVR_cross_val_args = {
 conf_data_split_args = {
     "test_size": 0.1,
     "random_state": 0
+}
+
+
+conf_seq_model_params = {
+    "input_dim": 34,
+    "transformer_encoder_layer_params": {
+        "d_model": 64,
+        "nhead": 8,
+        "dim_feedforward": 64,
+    },
+    "transformer_encoder_params": {
+        "num_layers": 3
+    }
+}
+
+conf_auc_params = {
+    "auc_p": 2,
+    "auc_gamma": 0.7
+}
+
+conf_seq_model_opt_params = {
+    "constructor": torch.optim.AdamW,
+    "opt_params": {
+        "lr": 2e-3
+    }
 }
