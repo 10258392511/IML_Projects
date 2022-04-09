@@ -1,6 +1,9 @@
 import numpy as np
 import torch
 
+from scipy.special import expit
+from sklearn.metrics import roc_auc_score, mean_squared_error, make_scorer
+
 
 def auc_star_loss(y_pred, y, epoch_pred, epoch_gt, gamma=0.3, p=2):
     # y_pred, y: (B,); epoch_pred, epoch_gt: (N,)
@@ -43,3 +46,14 @@ def r2_loss(y_pred, y):
 
     return -loss
 
+
+def auc_for_reg(y_true, y_pred):
+    y_pred = np.clip(y_pred, 0, 1)
+
+    return roc_auc_score(y_true, y_pred)
+
+
+def neg_rmse(y_true, y_pred):
+    mse = mean_squared_error(y_true, y_pred)
+
+    return -np.sqrt(mse)

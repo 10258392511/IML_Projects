@@ -10,6 +10,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import roc_curve, auc, r2_score
 from .preprocess import split_data
 from .configs import *
+from .utils import auc_for_reg
 
 
 class AbstractModel(abc.ABC):
@@ -62,6 +63,18 @@ class BinaryClassifier(AbstractModel):
             plt.close()
 
         return positive_probs, auc_score
+
+
+class SVRClassifier(AbstractModel):
+    def __init__(self, pipeline, cross_val_args, df_train_data_all, df_train_label_all, label, **kwargs):
+        super(SVRClassifier, self).__init__(pipeline, cross_val_args, df_train_data_all, df_train_label_all,
+                                               label, **kwargs)
+
+    def predict_and_evaluate(self, **kwargs):
+        pred = self.best_model.predict(self.X_test)
+        auc_score = auc_for_reg(self.y_test, pred)
+
+        return pred, auc_score
 
 
 class Regressor(AbstractModel):

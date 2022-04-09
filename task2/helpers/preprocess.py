@@ -31,13 +31,15 @@ def aggregate_by_mean_and_impute(df_train, if_save=True, save_path=None):
     if if_save:
         assert save_path is not None
     df_train_agg_mean = df_train.groupby("pid").agg("mean")  # NaN's automatically skipped
-    print(df_train_agg_mean.isna().sum() / df_train_agg_mean.shape[0])
+    # print(df_train_agg_mean.isna().sum() / df_train_agg_mean.shape[0])
     imputer = conf_imputer_args["class"](**conf_imputer_args["args"])
     array_train_imputed = imputer.fit_transform(df_train_agg_mean)
     df_train_imputed = pd.DataFrame(data=array_train_imputed, columns=df_train_agg_mean.columns)
 
     if if_save:
         df_train_imputed.to_csv(save_path)
+
+    return df_train_imputed
 
 
 def split_data(df_train: pd.DataFrame, df_train_label: pd.DataFrame, label, test_size=0.1, random_state=0):
