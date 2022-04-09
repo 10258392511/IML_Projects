@@ -77,10 +77,13 @@ def preprocess_for_transformer(feature_path, label_path=None):
 
 
 class Task2Dataset(Dataset):
-    def __init__(self, data_filename):
+    def __init__(self, data_filename, data=None):
         super(Task2Dataset, self).__init__()
-        with open(data_filename, "rb") as rf:
-            self.data = pickle.load(rf)
+        if data is None:
+            with open(data_filename, "rb") as rf:
+                self.data = pickle.load(rf)
+        else:
+            self.data = data
 
     def __len__(self):
         return len(self.data["pids"])
@@ -88,4 +91,8 @@ class Task2Dataset(Dataset):
     def __getitem__(self, index):
         pid = self.data["pids"][index]
         data = self.data["data"][pid]
+        if data["cls_labels"] is None:
+            data["cls_labels"] = 0
+        if data["reg_labels"] is None:
+            data["reg_labels"] = 0
         return data["age"], data["data"], data["cls_labels"], data["reg_labels"]

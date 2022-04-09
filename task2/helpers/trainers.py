@@ -26,6 +26,7 @@ class SeqModelTrainer(object):
         self.writer = SummaryWriter(log_dir=self.params["log_dir"])
 
     def train_(self, epoch_pred, epoch_gt):
+        self.model.train()
         if self.params["if_notebook"]:
             from tqdm.notebook import tqdm
         else:
@@ -62,6 +63,7 @@ class SeqModelTrainer(object):
 
     @torch.no_grad()
     def eval_(self):
+        self.model.eval()
         if self.params["if_notebook"]:
             from tqdm.notebook import tqdm
         else:
