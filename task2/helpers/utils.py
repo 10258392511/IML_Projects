@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from scipy.special import expit
-from sklearn.metrics import roc_auc_score, mean_squared_error, make_scorer
+from sklearn.metrics import roc_auc_score, mean_squared_error, r2_score, make_scorer
 
 
 def auc_star_loss(y_pred, y, epoch_pred, epoch_gt, gamma=0.3, p=2):
@@ -57,3 +57,10 @@ def neg_rmse(y_true, y_pred):
     mse = mean_squared_error(y_true, y_pred)
 
     return -np.sqrt(mse)
+
+
+def modified_r2(y_true, y_pred):
+    r2_val = r2_score(y_true, y_pred)
+
+    return 0.5 + 0.5 * np.maximum(0, r2_val)
+    # return r2_val

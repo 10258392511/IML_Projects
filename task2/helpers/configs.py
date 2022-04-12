@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import make_scorer
 from imblearn.over_sampling import SMOTE
-from .utils import auc_for_reg, neg_rmse
+from .utils import auc_for_reg, neg_rmse, modified_r2
 
 
 conf_device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -71,10 +71,10 @@ conf_SVC_args = {
 
 conf_SVC_cross_val_args = {
     "param_grid": {
-        "svc__C": [0.009, 0.01, 0.011],
-        "svc__gamma": [0.04, 0.05, 0.06],
+        "svc__C": [0.001],
+        "svc__gamma": [0.012, 0.013, 0.011],
         "svc__kernel": ["rbf"],
-        "svc__class_weight": [{0: 1, 1: 9}, {0: 1, 1: 10}, {0: 1, 1: 11}]
+        "svc__class_weight": [{0: 1, 1: 9}]
     },
     "scoring": ["roc_auc", "accuracy"],  # ["roc_auc", "accuracy", "f1", "precision", "recall"],
     "refit": "roc_auc",
@@ -123,13 +123,29 @@ conf_SVR_cls_cross_val_args = {
 
 conf_SVR_cross_val_args = {
     "param_grid": {
-        "svr__C": [1, 10, 100],
-        "svr__gamma": [1],
+        "svr__C": [300],
+        "svr__gamma": [0.0001],
         "svr__kernel": ["rbf"]
     },
-    "scoring": ["r2", "neg_root_mean_squared_error"],
+    "scoring": {
+        "r2": make_scorer(modified_r2),
+        "nrmse": make_scorer(neg_rmse)
+    },
     "refit": "r2",
-    "cv": 3,
+    "cv": 5,
+    "verbose": 3
+}
+
+conf_ridge_cross_val_args = {
+    "param_grid": {
+        "ridge__alpha": [100]
+    },
+    "scoring": {
+        "r2": make_scorer(modified_r2),
+        "nrmse": make_scorer(neg_rmse)
+    },
+    "refit": "r2",
+    "cv": 5,
     "verbose": 3
 }
 

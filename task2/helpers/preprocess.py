@@ -42,6 +42,19 @@ def aggregate_by_mean_and_impute(df_train, if_save=True, save_path=None):
     return df_train_imputed
 
 
+def min_max_features(df_train: pd.DataFrame, df_train_labels: pd.DataFrame, df_test: pd.DataFrame, start_feature):
+    df_train = df_train.groupby("pid").agg(["mean", "std", "max", "min"])
+    df_train = df_train.fillna(df_train.mean())
+    df_train_labels = df_train_labels.sort_values("pid")
+    df_test = df_test.groupby("pid").agg(["mean", "std", "max", "min"])
+    df_test = df_test.fillna(df_train.mean())
+
+    df_train = df_train.loc[:, start_feature:]
+    df_test = df_test.loc[:, start_feature:]
+
+    return df_train, df_train_labels, df_test
+
+
 def split_data(df_train: pd.DataFrame, df_train_label: pd.DataFrame, label, test_size=0.1, random_state=0):
     if isinstance(df_train, np.ndarray) and isinstance(df_train_label, np.ndarray):
         X, y = df_train, df_train_label
