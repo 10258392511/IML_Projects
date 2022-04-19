@@ -4,3 +4,4 @@ exp*.ipynb
 *.ipynb_checkpoints/
 run/
 params/
+*.joblib
