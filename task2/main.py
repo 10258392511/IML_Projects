@@ -62,6 +62,7 @@ def subtask1():
     # process label
     train_label = pd.read_csv(train_label_path)
     train_label.set_index('pid', inplace=True)
+    train_label.sort_index(ascending=True, inplace=True)
     label_list = ['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos', 'LABEL_Bilirubin_total', 'LABEL_Lactate', 'LABEL_TroponinI', 'LABEL_SaO2', 'LABEL_Bilirubin_direct', 'LABEL_EtCO2']
     labels = train_label[label_list]
 
@@ -100,10 +101,6 @@ def subtask1():
     var_test.sort_index(ascending=True)
 
     features_test = features_test.join(var_test, on='pid')
-
-    result_path = "data/subtask1(1).csv"
-    df_result = pd.read_csv(result_path)
-    train_label.set_index('pid', inplace=True)
 
     #prepare model
     scaler = StandardScaler()
