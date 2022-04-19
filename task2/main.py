@@ -14,7 +14,6 @@ from joblib import dump, load
 
 
 def subtask1():
-    # TODO: fill in training procedure; returns pd.DataFrame
     train_path = "data/train_features.csv"
     train_label_path = "data/train_labels.csv"
     test_path = "data/test_features.csv"
@@ -256,4 +255,3 @@ if __name__ == '__main__':
     out_path = "data/task2_results.zip"
     df_compression_args = dict(method="zip", archive_name="task2_results.csv")
     df_out.to_csv(out_path, float_format="%.3f", index=False, compression=df_compression_args)
-
