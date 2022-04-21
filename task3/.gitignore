@@ -1,0 +1,7 @@
+data/
+exp*.ipynb
+*__pycache__/
+*.ipynb_checkpoints/
+run/
+params/
+*.joblib
