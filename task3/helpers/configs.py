@@ -1,3 +1,5 @@
+from torch.optim import AdamW
+
 configs_train_test_split_ratio = 0.9
 
 configs_normalizer_param = {
@@ -35,6 +37,16 @@ configs_gaussian_blur_param = {
 }
 
 configs_food_taster_param = {
-    "resnet_name": "resnet50",
+    "resnet_name": "resnet18",
     "feature_dim": 128
+}
+
+configs_trainer_param = {
+    "opt_args": {
+        "class": AdamW,
+        "args": {
+            "lr": 1e-3
+        }
+    },
+    "alpha": 2  # maximum: 4
 }

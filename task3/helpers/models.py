@@ -15,13 +15,16 @@ from .pytorch_utils import ptu_device, to_numpy
 
 
 class FoodDataset(Dataset):
-    def __init__(self, train_filename, mode="train"):
-        assert mode in ("train", "test"), "invalid mode"
+    def __init__(self, filename, mode="train"):
+        assert mode in ("train", "val", "test"), "invalid mode"
         super(FoodDataset, self).__init__()
         self.mode = mode
-        train_all_paths = convert_txt_to_paths(train_filename)
-        train_paths, test_paths = train_test_split(train_all_paths)
-        self.paths = train_paths if self.mode == "train" else test_paths
+        all_paths = convert_txt_to_paths(filename)
+        if mode != "test":
+            train_paths, test_paths = train_test_split(all_paths)
+            self.paths = train_paths if self.mode == "train" else test_paths
+        else:
+            self.paths = all_paths
 
     def __len__(self):
         return len(self.paths)
@@ -75,7 +78,8 @@ class FoodDataset(Dataset):
 
     def visualize_imgs(self, imgs: List[torch.Tensor], **kwargs):
         assert len(imgs) > 0
-        if self.mode == "test":
+        mode = kwargs.get("mode", self.mode)
+        if mode != "train":
             norm_mean, norm_std = np.array(configs_normalizer_param["mean"]), np.array(configs_normalizer_param["std"])
             de_normalizer = Normalize(-norm_mean / norm_std, 1 / norm_std)
         figsize = kwargs.get("figsize", (3.6 * len(imgs), 4.8))
@@ -84,7 +88,7 @@ class FoodDataset(Dataset):
             axes = [axes]
 
         for axis, img in zip(axes, imgs):
-            if self.mode == "test":
+            if mode != "train":
                 img = de_normalizer(img)
             img_np = to_numpy(img.permute(1, 2, 0))
             axis.imshow(np.clip(img_np, 0, 1))
