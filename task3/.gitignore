@@ -11,4 +11,5 @@ submission/
 logs/
 *.sh
 test_submission.*
-
+*.pt
+!exp_dataset_and_models.ipynb

@@ -103,7 +103,7 @@ class FoodTaster(nn.Module):
     def __init__(self, params):
         """
         params:
-            configs: "resnet_name"
+            configs: resnet_name, feature_dim
         """
         super(FoodTaster, self).__init__()
         self.params = params

@@ -68,6 +68,7 @@ def download_file(url, save_dir, save_filename):
         os.makedirs(save_dir)
     save_path = os.path.join(save_dir, save_filename)
     urlretrieve(url, save_path)
+    print("Done!")
 
 
 def unzip_file(filename, save_dir):
@@ -76,6 +77,7 @@ def unzip_file(filename, save_dir):
         os.makedirs(save_dir)
     with zipfile.ZipFile(filename) as zip_rf:
         zip_rf.extractall(save_dir)
+    print("Done!")
 
 
 if __name__ == '__main__':
