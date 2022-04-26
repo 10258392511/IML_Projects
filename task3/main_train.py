@@ -33,6 +33,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--num_workers", type=int, default=0)
     args = vars(parser.parse_args())
 
     time_stamp = f"{time.time()}".replace(".", "_")
@@ -50,9 +51,9 @@ if __name__ == '__main__':
     eval_dataset = FoodDataset(all_params["train_filename"], mode="val")
     test_dataset = FoodDataset(all_params["test_filename"], mode="test")
 
-    train_loader = DataLoader(train_dataset, batch_size=all_params["batch_size"], shuffle=True)
-    eval_loader = DataLoader(eval_dataset, batch_size=all_params["batch_size"])
-    test_loader = DataLoader(test_dataset, batch_size=all_params["batch_size"])
+    train_loader = DataLoader(train_dataset, batch_size=all_params["batch_size"], num_workers=all_params["num_workers"], shuffle=True)
+    eval_loader = DataLoader(eval_dataset, batch_size=all_params["batch_size"], num_workers=all_params["num_workers"])
+    test_loader = DataLoader(test_dataset, batch_size=all_params["batch_size"], num_workers=all_params["num_workers"])
 
     food_taster = FoodTaster(all_params).to(ptu.ptu_device)
     trainer = FoodTasterTrainer(food_taster, train_loader, eval_loader, all_params)

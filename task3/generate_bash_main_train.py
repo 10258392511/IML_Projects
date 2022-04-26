@@ -13,7 +13,7 @@ eval "$(conda shell.bash hook)"
 conda activate deep_learning
 # cd ..
 
-python ./main_train.py --batch_size {hyper_param_dict["batch_size"]} --epochs {hyper_param_dict["epochs"]}"""
+python ./main_train.py --batch_size {hyper_param_dict["batch_size"]} --epochs {hyper_param_dict["epochs"]} --num_workers 3"""
 
     return bash_script
 
