@@ -6,12 +6,12 @@ import argparse
 
 def make_bash_script(hyper_param_dict: dict):
     bash_script = f"""#!/bin/bash
-#SBATCH --output=run_alt_norm_log/%j.out
+#SBATCH --output=logs/%j.out
 #SBATCH --gres=gpu:1
 #SBATCH --mem=40G
 eval "$(conda shell.bash hook)"
 conda activate deep_learning
-cd ../IML_Projects/task3
+# cd ..
 
 python ./main_train.py --batch_size {hyper_param_dict["batch_size"]} --epochs {hyper_param_dict["epochs"]}"""
 

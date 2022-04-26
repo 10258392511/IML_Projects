@@ -7,3 +7,8 @@ params/
 *.joblib
 exp*.ipynb
 *.zip
+submission/
+logs/
+*.sh
+test_submission.*
+

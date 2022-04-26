@@ -8,6 +8,7 @@ from itertools import chain
 from PIL import Image
 from typing import List, Tuple
 from torch.utils.data import Dataset
+from torchvision.models import resnet18
 from torchvision.transforms import PILToTensor, Normalize, RandomAffine, ColorJitter, GaussianBlur, \
     RandomHorizontalFlip, RandomVerticalFlip, RandomResizedCrop, Resize
 from .utils import convert_txt_to_paths, train_test_split
@@ -106,7 +107,8 @@ class FoodTaster(nn.Module):
         """
         super(FoodTaster, self).__init__()
         self.params = params
-        self.resnet = torch.hub.load("pytorch/vision:v0.10.0", self.params["resnet_name"], pretrained=True)
+        # self.resnet = torch.hub.load("pytorch/vision:v0.10.0", self.params["resnet_name"], pretrained=True)
+        self.resnet = resnet18(pretrained=True)
         self.resnet.eval()
         self.resnet.fc = nn.Linear(self.resnet.fc.in_features, self.params["feature_dim"])
         # self.dropout = nn.Dropout(p=0.5)

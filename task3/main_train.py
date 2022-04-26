@@ -18,13 +18,14 @@ if __name__ == '__main__':
     python ./main_train.py --batch_size 64 --epochs 10
     """
     # download dataset
-    data_dir = "./data_download"
+    data_dir = "./data"
     zip_filename = "food.zip"
-    zip_filename = create_param_save_path(data_dir, zip_filename)
+    zip_path = os.path.join(data_dir, zip_filename)
     if not os.path.isdir(data_dir):
         download_file(dataset_url, data_dir, zip_filename)
-        unzip_file(zip_filename, data_dir)
-        os.remove(zip_filename)
+        unzip_file(zip_path, ".")
+        os.remove(zip_path)
+        print("Done retrieving dataset!")
     else:
         print("Dataset already downloaded.")
 
