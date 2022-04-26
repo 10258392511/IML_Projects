@@ -12,3 +12,6 @@ logs/
 test_submission.*
 *.pt
 !exp_dataset_and_models.ipynb
+*.sh
+!predict.sh
+

@@ -57,5 +57,5 @@ if __name__ == '__main__':
     predictions = np.concatenate(predictions, axis=-1)
 
     # save_results
-    save_path = "data/predictions.txt"
+    save_path = "predictions.txt"
     save_results(predictions, save_path)
