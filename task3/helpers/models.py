@@ -142,6 +142,7 @@ class FoodTaster(nn.Module):
 @torch.no_grad()
 def predict(model, imgs: Tuple[torch.Tensor]):
     # imgs: [(B, C, H, W)]
+    model.eval()
     imgs = [img.float().to(ptu_device) for img in imgs]
     features1, features2, features3 = [to_numpy(model(img)) for img in imgs]  # (B, N_features) each
     dist12 = np.linalg.norm(features1 - features2, axis=1)
