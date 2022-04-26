@@ -38,15 +38,15 @@ configs_gaussian_blur_param = {
 
 configs_food_taster_param = {
     "resnet_name": "resnet18",
-    "feature_dim": 128
+    "feature_dim": 32
 }
 
 configs_trainer_param = {
     "opt_args": {
         "class": AdamW,
         "args": {
-            "lr": 1e-3
+            "lr": 5e-4
         }
     },
-    "alpha": 2  # maximum: 4
+    "alpha": 1  # maximum: 4
 }

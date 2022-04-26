@@ -13,7 +13,7 @@ eval "$(conda shell.bash hook)"
 conda activate deep_learning
 # cd ..
 
-python ./main_train.py --batch_size {hyper_param_dict["batch_size"]} --epochs {hyper_param_dict["epochs"]} --num_workers 3"""
+python ./main_train.py --batch_size {hyper_param_dict["batch_size"]} --epochs {hyper_param_dict["epochs"]} --num_workers 8"""
 
     return bash_script
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     """
     hyper_params = dict()
     # set 1
-    hyper_params[1] = [{"batch_size": 64, "epochs": 10}]
+    hyper_params[1] = [{"batch_size": 128, "epochs": 10}]
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--set_num", type=int, choices=hyper_params.keys(), required=True)
