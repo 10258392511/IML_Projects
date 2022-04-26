@@ -1,3 +1,4 @@
+import argparse
 import os
 import numpy as np
 import torch
@@ -9,11 +10,17 @@ from helpers.utils import download_file, save_results
 from helpers.models import FoodTaster, FoodDataset, predict
 from tqdm import tqdm
 
-model_params_url = "https://polybox.ethz.ch/index.php/s/JIcpiz6Xf3dQ8on/download"
+model_params_url = "https://polybox.ethz.ch/index.php/s/WH5Vq4f8vV07iO2/download"
 model_param_dir = "trained_params/"
 model_param_filename = "food_taster.pt"
 
 if __name__ == '__main__':
+    """
+    python ./main.py
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--num_workers", type=int, default=0)
+    args = vars(parser.parse_args())
     # download model params
     model_param_path = os.path.join(model_param_dir, model_param_filename)
     if not os.path.isfile(model_param_path):
@@ -27,9 +34,10 @@ if __name__ == '__main__':
         "test_filename": "data/test_triplets.txt"
     }
     all_params.update(configs.configs_food_taster_param)
+    all_params.update(args)
 
     test_dataset = FoodDataset(all_params["test_filename"], mode="test")
-    test_loader = DataLoader(test_dataset, all_params["batch_size"])
+    test_loader = DataLoader(test_dataset, all_params["batch_size"], num_workers=all_params["num_workers"])
     food_taster = FoodTaster(all_params).to(ptu.ptu_device)
     food_taster.load_state_dict(torch.load(model_param_path))
     food_taster.eval()

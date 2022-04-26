@@ -139,7 +139,7 @@ class FoodTasterTrainer(object):
         dist13 = ((X1 - X3) ** 2).sum(dim=1)  # (B,)
         loss = dist12 - dist13 + self.params["alpha"]
         loss[loss < 0] = 0
-        loss = loss.mean()
+        loss = loss.max()
         with torch.no_grad():
             acc = (dist12 < dist13).sum() / X1.shape[0]
 
