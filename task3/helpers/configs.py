@@ -48,5 +48,5 @@ configs_trainer_param = {
             "lr": 5e-4
         }
     },
-    "alpha": 0.1  # maximum: 4
+    "alpha": 0.3  # maximum: 4
 }

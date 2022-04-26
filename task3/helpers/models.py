@@ -50,7 +50,7 @@ class FoodDataset(Dataset):
             for img in imgs:
                 for transform in aug_transforms:
                     sample = np.random.rand()
-                    if sample > 0.5:
+                    if sample > 0.8:
                         img = transform(img)
                 imgs_out.append(img)
 
