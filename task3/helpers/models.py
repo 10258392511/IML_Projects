@@ -39,30 +39,35 @@ class FoodDataset(Dataset):
         imgs = [(pil_to_tensor(img) / 255.).to(torch.float32) for img in imgs]
         imgs_out = []
 
-        if self.mode == "train":
-            aug_transforms = [
-                RandomAffine(**configs_random_affine_param),
-                ColorJitter(**configs_color_jitter_param),
-                GaussianBlur(**configs_gaussian_blur_param),
-                RandomHorizontalFlip(p=1),
-                RandomVerticalFlip(p=1)
-            ]
-            for img in imgs:
-                for transform in aug_transforms:
-                    sample = np.random.rand()
-                    if sample > 0.5:
-                        img = transform(img)
-                imgs_out.append(img)
+        # if self.mode == "train":
+        #     aug_transforms = [
+        #         RandomAffine(**configs_random_affine_param),
+        #         ColorJitter(**configs_color_jitter_param),
+        #         GaussianBlur(**configs_gaussian_blur_param),
+        #         RandomHorizontalFlip(p=1),
+        #         RandomVerticalFlip(p=1)
+        #     ]
+        #     for img in imgs:
+        #         for transform in aug_transforms:
+        #             sample = np.random.rand()
+        #             if sample > 0.5:
+        #                 img = transform(img)
+        #         imgs_out.append(img)
 
-            resizer = RandomResizedCrop(**configs_random_crop_resize_param)
-            imgs_out = [resizer(img) for img in imgs_out]
+        #     resizer = RandomResizedCrop(**configs_random_crop_resize_param)
+        #     imgs_out = [resizer(img) for img in imgs_out]
 
-        else:
-            resizer = Resize(configs_random_crop_resize_param["size"])
-            for img in imgs:
-                img = resizer(img)
-                imgs_out.append(img)
+        # else:
+        #     resizer = Resize(configs_random_crop_resize_param["size"])
+        #     for img in imgs:
+        #         img = resizer(img)
+        #         imgs_out.append(img)
 
+        resizer = Resize(configs_random_crop_resize_param["size"])
+        for img in imgs:
+            img = resizer(img)
+            imgs_out.append(img)
+        
         normalizer = Normalize(**configs_normalizer_param)
         imgs_out = [normalizer(img) for img in imgs_out]
         img1, img2, img3 = imgs_out

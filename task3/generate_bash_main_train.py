@@ -9,11 +9,12 @@ def make_bash_script(hyper_param_dict: dict):
 #SBATCH --output=logs/%j.out
 #SBATCH --gres=gpu:1
 #SBATCH --mem=40G
+#SBATCH --cpus-per-task=5
 eval "$(conda shell.bash hook)"
 conda activate deep_learning
 # cd ..
 
-python ./main_train.py --batch_size {hyper_param_dict["batch_size"]} --epochs {hyper_param_dict["epochs"]} --num_workers 8"""
+python ./main_train.py --batch_size {hyper_param_dict["batch_size"]} --epochs {hyper_param_dict["epochs"]} --num_workers 16"""
 
     return bash_script
 
