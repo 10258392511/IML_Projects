@@ -14,10 +14,10 @@ configs_random_crop_resize_param = {
 }
 
 configs_random_affine_param = {
-    "degrees": 30,
+    "degrees": 15,
     "translate": (0.1, 0.1),
     "scale": (0.8, 1.2),
-    "shear": 10
+    "shear": 5
 }
 
 configs_random_gaussian_noise_param = {

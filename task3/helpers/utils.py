@@ -2,8 +2,11 @@ import os
 import random
 import numpy as np
 import torch
+import zipfile
 
+from urllib.request import urlretrieve
 from pprint import pprint
+
 if __name__ == '__main__':
     from configs import *
 else:
@@ -59,6 +62,22 @@ def save_results(result: np.ndarray, save_path: str):
     np.savetxt(save_path, result, fmt="%1d")
 
 
+def download_file(url, save_dir, save_filename):
+    print("downloading...")
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+    save_path = os.path.join(save_dir, save_filename)
+    urlretrieve(url, save_path)
+
+
+def unzip_file(filename, save_dir):
+    print("unzipping...")
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+    with zipfile.ZipFile(filename) as zip_rf:
+        zip_rf.extractall(save_dir)
+
+
 if __name__ == '__main__':
     # # test convert_txt_to_paths(.)
     # for filename in ["../data/train_triplets.txt", "../data/test_triplets.txt"]:
@@ -67,18 +86,29 @@ if __name__ == '__main__':
     #     print(f"number samples: {len(paths)}")
     #     print("-" * 50)
 
-    # test train_test_split(.)
-    train_all_filename = "../data/train_triplets.txt"
-    train_paths_all = convert_txt_to_paths(train_all_filename)
-    train_paths, test_paths = train_test_split(train_paths_all)
-    pprint(train_paths[:5])
-    print("-" * 50)
-    pprint(test_paths[:5])
-    print("-" * 50)
-    print(f"{len(train_paths)}, {len(test_paths)}")
+    # # test train_test_split(.)
+    # train_all_filename = "../data/train_triplets.txt"
+    # train_paths_all = convert_txt_to_paths(train_all_filename)
+    # train_paths, test_paths = train_test_split(train_paths_all)
+    # pprint(train_paths[:5])
+    # print("-" * 50)
+    # pprint(test_paths[:5])
+    # print("-" * 50)
+    # print(f"{len(train_paths)}, {len(test_paths)}")
 
     # # test save_results(.)
     # B = 100
     # X = np.random.randint(0, 2, size=(B,))
     # save_filename = "../exps/results/test_save_results.txt"
     # save_results(X, save_filename)
+
+    # # test downloading file and unzipping it
+    # url = "https://polybox.ethz.ch/index.php/s/39L5nDkzCNEhJ6J/download"
+    # save_dir = "../data_download"
+    # save_filename = "food.zip"
+    # print("downloading...")
+    # download_file(url, save_dir, save_filename)
+    # save_path = os.path.join(save_dir, save_filename)
+    # print("unzipping...")
+    # unzip_file(save_path, save_dir)
+    pass

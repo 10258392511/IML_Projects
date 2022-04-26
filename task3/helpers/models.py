@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from itertools import chain
 from PIL import Image
 from typing import List, Tuple
 from torch.utils.data import Dataset
@@ -35,8 +36,6 @@ class FoodDataset(Dataset):
         imgs = [Image.open(path) for path in paths]
         pil_to_tensor = PILToTensor()
         imgs = [(pil_to_tensor(img) / 255.).to(torch.float32) for img in imgs]
-        normalizer = Normalize(**configs_normalizer_param)
-        imgs = [normalizer(img) for img in imgs]
         imgs_out = []
 
         if self.mode == "train":
@@ -63,6 +62,8 @@ class FoodDataset(Dataset):
                 img = resizer(img)
                 imgs_out.append(img)
 
+        normalizer = Normalize(**configs_normalizer_param)
+        imgs_out = [normalizer(img) for img in imgs_out]
         img1, img2, img3 = imgs_out
 
         return img1, img2, img3
@@ -108,14 +109,32 @@ class FoodTaster(nn.Module):
         self.resnet = torch.hub.load("pytorch/vision:v0.10.0", self.params["resnet_name"], pretrained=True)
         self.resnet.eval()
         self.resnet.fc = nn.Linear(self.resnet.fc.in_features, self.params["feature_dim"])
+        # self.dropout = nn.Dropout(p=0.5)
+        # self.head = nn.Sequential(
+        #     nn.Linear(self.params["feature_dim"], self.params["feature_dim"]),
+        #     nn.ReLU(),
+        #     nn.Linear(self.params["feature_dim"], self.params["feature_dim"])
+        # )
+        self.set_trainable_params()
 
     def forward(self, X):
         # X: (B, C, H, W)
         X = self.resnet(X)  # (B, N_features)
+        # X = self.dropout(X)
+        # X = self.head(X)
         X = F.normalize(X, dim=1)
 
         # (B, N_features)
         return X
+
+    def set_trainable_params(self):
+        for param in self.resnet.parameters():
+            param.requires_grad = False
+        # trainable_modules = [self.resnet.fc, self.dropout, self.head]
+        trainable_modules = [self.resnet.fc]
+        for module in trainable_modules:
+            for param in module.parameters():
+                param.requires_grad = True
 
 
 @torch.no_grad()

@@ -16,7 +16,8 @@ class FoodTasterTrainer(object):
         self.model = model
         self.train_loader = train_loader
         self.test_loader = test_loader
-        self.opt = self.params["opt_args"]["class"](self.model.parameters(), **self.params["opt_args"]["args"])
+        self.opt = self.params["opt_args"]["class"]([param for param in self.model.parameters() if param.requires_grad],
+                                                    **self.params["opt_args"]["args"])
         self.writer = SummaryWriter(log_dir=self.params["log_dir"])
         self.global_steps = {"train": 0, "eval": 0, "epoch": 0}
         self.model_save_path = create_param_save_path(self.params["param_save_dir"], "food_taster.pt")
@@ -57,6 +58,7 @@ class FoodTasterTrainer(object):
 
         loss_avg /= len(self.train_loader.dataset)
         acc /= len(self.train_loader.dataset)
+        pbar.close()
 
         return {"loss": loss_avg, "acc": acc}
 
@@ -94,6 +96,7 @@ class FoodTasterTrainer(object):
 
         loss_avg /= len(self.test_loader.dataset)
         acc /= len(self.test_loader.dataset)
+        pbar.close()
 
         return {"loss": loss_avg, "acc": acc}
 
