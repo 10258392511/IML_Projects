@@ -92,12 +92,12 @@ def unzip_file(filename, save_dir):
 
 
 if __name__ == '__main__':
-    # # test convert_txt_to_paths(.)
-    # for filename in ["../data/train_triplets.txt", "../data/test_triplets.txt"]:
-    #     paths = convert_txt_to_paths(filename)
-    #     pprint(paths[:5])
-    #     print(f"number samples: {len(paths)}")
-    #     print("-" * 50)
+    # test convert_txt_to_paths(.)
+    for filename in ["../data/train_triplets.txt", "../data/test_triplets.txt"]:
+        paths = convert_txt_to_paths(filename)
+        pprint(paths[:5])
+        print(f"number samples: {len(paths)}")
+        print("-" * 50)
 
     # # test train_test_split(.)
     # train_all_filename = "../data/train_triplets.txt"
