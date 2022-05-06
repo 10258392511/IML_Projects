@@ -67,6 +67,13 @@ def create_log_dir(time_stamp: str, arg_dict: dict):
     return dir_name.replace(".", "_")
 
 
+def read_prediction(filename: str):
+    assert filename.find(".txt") >= 0, "invalid file type"
+    pred = np.genfromtxt(filename)
+
+    return pred
+
+
 def save_results(result: np.ndarray, save_path: str):
     assert save_path.find(".txt") >= 0, "invalid file type"
     result = result.reshape((-1, 1))

@@ -1,61 +1,58 @@
-import argparse
-import os
 import numpy as np
-import torch
-import helpers.configs as configs
-import helpers.pytorch_utils as ptu
+import os
+import shutil
 
-from torch.utils.data import DataLoader
-from helpers.utils import download_file, save_results
-from helpers.models import FoodTaster, FoodDataset, predict
-from tqdm import tqdm
+from helpers.utils import read_prediction, save_results, download_file, unzip_file
 
-model_params_url = "https://polybox.ethz.ch/index.php/s/WH5Vq4f8vV07iO2/download"
-model_param_dir = "trained_params/"
-model_param_filename = "food_taster.pt"
+
+def read_from_directory_and_ensemble(dir_name):
+    predictions = []
+    for filename in os.listdir(dir_name):
+        filename = os.path.join(dir_name, filename)
+        if os.path.isfile(filename) and filename.find(".txt") >= 0:
+            predictions.append(read_prediction(filename))
+
+    assert len(predictions) % 2 == 1, "only support odd number of models"
+    predictions = np.array(predictions)  # (N_pred, N_samples)
+    ensemble = predictions.mean(axis=0) > 0.5
+
+    return ensemble.astype(int)
+
+
+def create_submission():
+    temp_dir = "./submission_task_3"
+    if os.path.isdir(temp_dir):
+        user_in = input("Delete the old directory (Y/N): ")
+        if user_in.lower() == "y":
+            shutil.rmtree(temp_dir)
+
+    os.mkdir(temp_dir)
+    for filename in os.listdir("."):
+        if filename.find(".py") >= 0 or filename.find(".md") >= 0:
+            shutil.copy(filename, temp_dir)
+
+    helpers_dir = os.path.join(temp_dir, "helpers")
+    os.mkdir(helpers_dir)
+    shutil.copytree("./helpers", helpers_dir, dirs_exist_ok=True)
+    pycache_dir = os.path.join(helpers_dir, "__pycache__")
+    if os.path.isdir(pycache_dir):
+        shutil.rmtree(pycache_dir)
+    shutil.make_archive("task3", "zip", temp_dir)
+
 
 if __name__ == '__main__':
     """
-    python ./main.py
+    TODO
+    Trained models to make ensemble are available at ...
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--num_workers", type=int, default=0)
-    args = vars(parser.parse_args())
-    # download model params
-    model_param_path = os.path.join(model_param_dir, model_param_filename)
-    if not os.path.isfile(model_param_path):
-        download_file(model_params_url, model_param_dir, model_param_filename)
-    else:
-        print("Using saved parameters.")
+    url = "https://polybox.ethz.ch/index.php/s/m8yWi1I6HryPg0y/download"
+    save_dir = "./predictions_downloaded"
+    save_filename = "predictions.zip"
+    save_path = os.path.join(save_dir, save_filename)
+    download_file(url, save_dir, save_filename)
+    unzip_file(save_path, ".")
 
-    # test dataset & model
-    all_params = {
-        "batch_size": 256,
-        "test_filename": "data/test_triplets.txt"
-    }
-    all_params.update(configs.configs_food_taster_param)
-    all_params.update(args)
+    ensemble = read_from_directory_and_ensemble("./predictions")
+    save_results(ensemble, "predictions.txt")
 
-    test_dataset = FoodDataset(all_params["test_filename"], mode="test")
-    test_loader = DataLoader(test_dataset, all_params["batch_size"], num_workers=all_params["num_workers"])
-    food_taster = FoodTaster(all_params).to(ptu.ptu_device)
-    food_taster.load_state_dict(torch.load(model_param_path))
-    food_taster.eval()
-
-    # predict
-    with torch.no_grad():
-        predictions = []
-        pbar = tqdm(test_loader, total=len(test_loader))
-        for i, (X1, X2, X3) in enumerate(pbar):
-            # ### debug only ###
-            # if i > 2:
-            #     break
-            # ###
-            pred_batch = predict(food_taster, (X1, X2, X3))  # ndarray, (B,)
-            predictions.append(pred_batch)
-
-    predictions = np.concatenate(predictions, axis=-1)
-
-    # save_results
-    save_path = "predictions.txt"
-    save_results(predictions, save_path)
+    create_submission()
