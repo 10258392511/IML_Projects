@@ -28,7 +28,7 @@ def create_submission():
 
     os.mkdir(temp_dir)
     for filename in os.listdir("."):
-        if filename.find(".py") >= 0 or filename.find(".md") >= 0:
+        if filename.find(".py") >= 0 or filename.find(".md") >= 0 or filename.find("requirements.txt") >= 0:
             shutil.copy(filename, temp_dir)
 
     helpers_dir = os.path.join(temp_dir, "helpers")
@@ -41,11 +41,7 @@ def create_submission():
 
 
 if __name__ == '__main__':
-    """
-    TODO
-    Trained models to make ensemble are available at ...
-    """
-    url = "https://polybox.ethz.ch/index.php/s/m8yWi1I6HryPg0y/download"
+    url = "https://polybox.ethz.ch/index.php/s/QyR5yu39TZZuSKc/download"
     save_dir = "./predictions_downloaded"
     save_filename = "predictions.zip"
     save_path = os.path.join(save_dir, save_filename)
