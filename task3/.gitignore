@@ -14,5 +14,6 @@ test_submission.*
 !exp_dataset_and_models.ipynb
 *.sh
 !predict.sh
+!cp_model_params.sh
 predictions_downloaded/
 submission_task_3/

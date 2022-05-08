@@ -44,7 +44,7 @@ if __name__ == '__main__':
             continue
 
         food_taster = FoodTaster(all_params).to(ptu.ptu_device)
-        food_taster.load_state_dict(torch.load(os.path.join(model_param_path, filename)))
+        food_taster.load_state_dict(torch.load(os.path.join(model_param_dir, filename)))
         food_taster.eval()
 
         # predict
