@@ -38,24 +38,29 @@ if __name__ == '__main__':
 
     test_dataset = FoodDataset(all_params["test_filename"], mode="test")
     test_loader = DataLoader(test_dataset, all_params["batch_size"], num_workers=all_params["num_workers"])
-    food_taster = FoodTaster(all_params).to(ptu.ptu_device)
-    food_taster.load_state_dict(torch.load(model_param_path))
-    food_taster.eval()
 
-    # predict
-    with torch.no_grad():
-        predictions = []
-        pbar = tqdm(test_loader, total=len(test_loader))
-        for i, (X1, X2, X3) in enumerate(pbar):
-            # ### debug only ###
-            # if i > 2:
-            #     break
-            # ###
-            pred_batch = predict(food_taster, (X1, X2, X3))  # ndarray, (B,)
-            predictions.append(pred_batch)
+    for filename in os.listdir(model_param_dir):
+        if filename.find(".pt") == -1:
+            continue
 
-    predictions = np.concatenate(predictions, axis=-1)
+        food_taster = FoodTaster(all_params).to(ptu.ptu_device)
+        food_taster.load_state_dict(torch.load(os.path.join(model_param_path, filename)))
+        food_taster.eval()
 
-    # save_results
-    save_path = "predictions.txt"
-    save_results(predictions, save_path)
+        # predict
+        with torch.no_grad():
+            predictions = []
+            pbar = tqdm(test_loader, total=len(test_loader))
+            for i, (X1, X2, X3) in enumerate(pbar):
+                # ### debug only ###
+                # if i > 2:
+                #     break
+                # ###
+                pred_batch = predict(food_taster, (X1, X2, X3))  # ndarray, (B,)
+                predictions.append(pred_batch)
+
+        predictions = np.concatenate(predictions, axis=-1)
+
+        # save_results
+        save_path = f"predictions/predictions_{filename.replace('.', '_')}.txt"
+        save_results(predictions, save_path)
