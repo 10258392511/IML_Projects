@@ -41,7 +41,7 @@ class MoleculeDataset(Dataset):
         id = self.dataset[0][index]  # int
         smile_str = self.dataset[1][index]  # str
         feature = self.dataset[2][index]  # (N_feat,)
-        tgt = self.dataset[3][index] if self.dataset[3] is not None else None  # float or None
+        tgt = self.dataset[3][index] if self.dataset[3] is not None else 0  # float or None (0)
 
         c2i = self.vocab["c2i"]
         smile_idx = np.array([c2i["<BOS>"]] + [c2i[c_iter] for c_iter in smile_str] + [c2i["<EOS>"]])

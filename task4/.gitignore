@@ -6,4 +6,5 @@ run/
 params/
 *.joblib
 exp*.ipynb
-
+*.csv
+model_params/

@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 import pickle
 
 
@@ -33,4 +32,17 @@ config_fusion_params = {
     "emb_size_all": config_seq_encoder_params["emb_size"] + config_mlp_params["out_size"],
     "hidden_dims": [64],
     "dropout": 0.1
+}
+
+config_train_params = {
+    "opt_class": torch.optim.AdamW,
+    "opt_params": {
+        "lr": 1e-3,
+    },
+    "scheduler_class": torch.optim.lr_scheduler.ExponentialLR,
+    "scheduler_params": {
+        "gamma": 0.5
+    },
+    "clip_grad_val": 1,
+    "save_filename": "model.pt"
 }

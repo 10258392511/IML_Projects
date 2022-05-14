@@ -1,8 +1,11 @@
 import numpy as np
 import pandas as pd
+import os
 import pickle
+import zipfile
 
 from typing import List
+from urllib.request import urlretrieve
 from collections import OrderedDict
 from .configs import config_split_ratio
 
@@ -68,3 +71,38 @@ def split_train_set(filename_feat, filename_label, seed=None, mode="train"):
 
     return ids[sel_inds], smiles[sel_inds], features[sel_inds], tgts[sel_inds]
 
+
+def create_param_save_path(param_save_dir, filename):
+    if not os.path.isdir(param_save_dir):
+        os.makedirs(param_save_dir)
+
+    return os.path.join(param_save_dir, filename)
+
+
+def create_log_dir(time_stamp: str, arg_dict: dict):
+    dir_name = time_stamp
+    for key, val in arg_dict.items():
+        if not isinstance(val, str):
+            dir_name += f"_{key}_{val:.3f}"
+        else:
+            dir_name += f"_{key}_{val}"
+
+    return dir_name.replace(".", "_")
+
+
+def download_file(url, save_dir, save_filename):
+    print("downloading...")
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+    save_path = os.path.join(save_dir, save_filename)
+    urlretrieve(url, save_path)
+    print("Done!")
+
+
+def unzip_file(filename, save_dir):
+    print("unzipping...")
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+    with zipfile.ZipFile(filename) as zip_rf:
+        zip_rf.extractall(save_dir)
+    print("Done!")
